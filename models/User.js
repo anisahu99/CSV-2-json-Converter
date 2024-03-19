@@ -9,34 +9,55 @@ const query =
     gender VARCHAR(10) NULL
 );
 `
-// const createTableQuery = `CREATE TABLE my_table (
-//     id SERIAL PRIMARY KEY,
-//     name VARCHAR(255)
-// )`;
-const insertQuery = `
-      INSERT INTO users (id, name, age)
-      VALUES ($1, $2, $3);
-    `;
-// const text = 'INSERT INTO user(id, name, age) VALUES($1, $2, $3) RETURNING *'
-// const values = [1,'brianc'];
 
 client.query(query, (err,result)=>{
     if(err){
         console.log('query error: ', err);
-        
-        // client.end();
     }
     else{
-        console.log('Table successfully created');
+        console.log('Table created or exist');
     }
 })
 
-// client.query(text,values,(err,result)=>{
-//     if(err){
-//         console.log(err);
-//     }
-//     else{
-//         console.log(result.rows[0]);
-//         client.end();
-//     }
-// })
+client.query('SELECT age FROM users',(err,result)=>{
+    if(err){
+        console.log('query error: ', err);
+    }
+    else{
+        // console.log('Age result: ',result);
+        const ages = result.rows.map(row => row.age);
+        // console.log(ages);
+        const totalUsers = ages.length;
+        const ageDistribution = {
+            '< 20': 0,
+            '20 to 40': 0,
+            '40 to 60': 0,
+            '> 60': 0
+        };
+
+        ages.forEach(age => {
+            if (age < 20) {
+                ageDistribution['< 20']++;
+            } else if (age >= 20 && age <= 40) {
+                ageDistribution['20 to 40']++;
+            } else if (age > 40 && age <= 60) {
+                ageDistribution['40 to 60']++;
+            } else {
+                ageDistribution['> 60']++;
+            }
+        });
+        const ageDistributionPercentage = {
+            '< 20': ((ageDistribution['< 20'] / totalUsers) * 100).toFixed(2),
+            '20 to 40': ((ageDistribution['20 to 40'] / totalUsers) * 100).toFixed(2),
+            '40 to 60': ((ageDistribution['40 to 60'] / totalUsers) * 100).toFixed(2),
+            '> 60': ((ageDistribution['> 60'] / totalUsers) * 100).toFixed(2)
+        };
+
+        const ageGroupArray = Object.keys(ageDistributionPercentage);
+        console.log("Age-Group       % Distribution");
+        ageGroupArray.forEach(ageGroup => {
+            console.log(ageGroup.padEnd(15), ageDistributionPercentage[ageGroup]);
+        });
+    }
+})
+

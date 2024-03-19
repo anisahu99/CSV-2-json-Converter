@@ -30,14 +30,17 @@ const importUser=async(req,res)=>{
                     }
                 })
             }
+            
         })
         // client.end();
         // console.log(req.file.path);
+        
         res.send({success:true,msg:'csv imported'});
     } catch(error){
         res.send({success:false,msg:error.message});
     }
 }
+
 
 module.exports = {
     importUser

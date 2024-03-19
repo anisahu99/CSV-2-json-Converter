@@ -1,6 +1,7 @@
 const express=require('express');
 const app=express();
 const User = require('./models/User');
+const userController = require('./controllers/userController');
 
 const client=require('./config/database');
 let userRoute=require('./routes/userRoute');
