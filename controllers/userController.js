@@ -8,9 +8,12 @@ const importUser=async(req,res)=>{
         .fromFile(req.file.path)
         .then((response)=>{
             for(let x=0;x<response.length;x++){
+                let firstName=response[x].name.firstName;
+                let lastName=response[x].name.lastName;
+                let name=firstName+" "+lastName;
                 userData.push({
                     id:response[x].id,
-                    name:response[x].firstName+response[x].lastName,
+                    name:name,
                     age:response[x].age
                 })
             }
@@ -24,12 +27,11 @@ const importUser=async(req,res)=>{
                     }
                     else{
                         console.log(result.rows[0]);
-                        client.end();
                     }
                 })
             }
         })
-        client.end();
+        // client.end();
         // console.log(req.file.path);
         res.send({success:true,msg:'csv imported'});
     } catch(error){
